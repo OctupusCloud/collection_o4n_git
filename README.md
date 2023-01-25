@@ -1,5 +1,3 @@
-# Ansible Collection - escrimaglia.o4n
+# Octupus Collection 
+Collection o4n_git helps to set the remote repo for git operations
 
-## Documentation for the collection
-
-Ansible modules for Oction Automation framework
