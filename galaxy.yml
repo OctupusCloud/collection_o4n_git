@@ -5,10 +5,10 @@
 namespace: escrimaglia
 
 # The name of the collection. Has the same character restrictions as 'namespace'
-name: pichincha
+name: devs_git
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.1
+version: 1.0.2
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -43,7 +43,7 @@ tags: ["automation","oction"]
 dependencies: {}
 
 # The URL of the originating SCM repository
-repository: http://example.com/repository
+repository: https://github.com/OctupusCloud/collection_o4n_git
 
 # The URL to any online docs
 documentation: http://docs.example.com
