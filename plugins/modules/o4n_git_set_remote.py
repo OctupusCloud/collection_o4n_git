@@ -44,7 +44,7 @@ options:
 EXAMPLES = """
 tasks:
   - name: Set remote
-      o4n_git_remote:
+      o4n_git_set_remote:
         state: present
         origin: origin
         branch: main
@@ -53,7 +53,7 @@ tasks:
       register: salida
 
   - name: Delete git remote
-     o4n_git_remote:
+     o4n_git_set_remote:
         state: absent
         remote: git@github.com:repository.git
         path: /src/path
@@ -177,7 +177,7 @@ def main():
     if module_success:
         module.exit_json(failed=False, content=Output)
     else:
-        module.exit_json(failed=True, content=Output)
+        module.fail_json(failed=True, content=Output)
 
 
 if __name__ == "__main__":
