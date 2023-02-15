@@ -8,61 +8,62 @@ DOCUMENTATION = """
 module: o4n_git_import
 version_added: "2.0"
 author: "Ed Scrimaglia"
-short_description: set git branch and it remote in a directory
+short_description: import some files from a repository to a local path
 description:
-    - Detect if already exists a remote git linked to the directory
-    - Set the origin/remote link
-    - Set the main branch
+    - clone a git repository
+    - select files from cloned content
+    - copy files to a local path
+    - remove clone content
 notes:
     - Testeado en linux
 options:
-    state:
+    token:
         description:
-            set or unset git remote
+            repository access token
         required: True
-    origin:
+    repo:
         description:
-            the origin
+            repository url to be cloned
+        required: True
+    path_clone:
+        description:
+            path where the repository will be cloned
+        required: True
+    path_import:
+        description:
+            path where cloned repository (path_cloned) content will copied
+        required: True
+    content:
+        description:
+            files selection to be copied to path_import
         required: False
-        default: origin
-    branch:
-        description:
-            branch to be used
-        required: True
-        default: M
-    remote:
-        description:
-            repository to be set as remote by git
-        required: True
-    path:
-        description:
-            directory where to set the remote
-        required: False
-        default: ./
+        default: "*.*"
 """
 
 EXAMPLES = """
 tasks:
-  - name: Set remote
-      o4n_git_set_remote:
-        state: present
-        origin: origin
-        branch: main
-        remote: git@github.com:repository.git
-        path: /src/path
+  - name: Import Repo
+      o4n_git_import:
+        token: "{{ token }}"
+        repo: origin
+        path_clone: "./temp"
+        path_import: "../files
+        content: "Docu*"
       register: salida
 
-  - name: Delete git remote
-     o4n_git_set_remote:
-        state: absent
-        remote: git@github.com:repository.git
-        path: /src/path
-    register: salida
+  - name: Import Repo
+      o4n_git_import:
+        token: "{{ token }}"
+        repo: origin
+        path_clone: "./temp"
+        path_import: "../files
+      register: salida
 """
 
-import os
 from ansible.module_utils.basic import AnsibleModule
 import subprocess
+import re
+import glob
 
 
 def import_from_repo_token(_repo, _token, _path_clone):
@@ -75,15 +76,16 @@ def import_from_repo_token(_repo, _token, _path_clone):
     value = ""
     if len(error_list) > 0:
         remote = [ele for ele in error_list if "remote" in ele]
-        fatal = [ele for ele in error_list if "fatal" in ele]
         if len(remote) > 0:
             remote_list = remote[0].split(":")
             if len(remote_list) == 2:
                 value = remote_list[1].strip()
-        if len(fatal):
-            fatal_list = fatal[0].split(":")
-            if len(fatal_list) == 2:
-                value = fatal_list[1].strip()
+        else:
+            fatal = [ele for ele in error_list if "fatal" in ele]
+            if len(fatal) > 0:
+                fatal_list = fatal[0].split(":")
+                if len(fatal_list) == 2:
+                    value = fatal_list[1].strip()
     if result_code == 0:
         success = True
         msg_ret = f"Repo <{_repo_name}> cloned to path <{_path_clone}>"
@@ -94,24 +96,9 @@ def import_from_repo_token(_repo, _token, _path_clone):
 
 
 def cp_content(_path_clone, _path_import, _content):
-    cmd_cp = f"cp -R {_path_clone}/{_content} {_path_import}"
-    result = subprocess.run(cmd_cp, text=True, capture_output=True, shell=True)
+    result = subprocess.run(['cp', '-r'] + glob.glob(_path_clone+"/"+_content) + [_path_import], text=True, capture_output=True )
     result_code = result.returncode
-    error_list = result.stderr.split("\n")
-    value = ""
-    if len(error_list) > 0:
-        remote = [ele for ele in error_list if "remote" in ele]
-        fatal = [ele for ele in error_list if "fatal" in ele]
-        if len(remote) > 0:
-            remote_list = remote[0].split(":")
-            if len(remote_list) == 2:
-                value = remote_list[1].strip()
-        else:
-            value = result.stderr.strip()
-        if len(fatal):
-            fatal_list = fatal[0].split(":")
-            if len(fatal_list) == 2:
-                value = fatal_list[1].strip()
+    value = "source file does not exist"
     if result_code == 0:
         success = True
         msg_ret = f"Content <{_path_clone}/{_content}> imported to <{_path_import}>"
@@ -130,17 +117,12 @@ def rm_clone(_path_clone):
     value = ""
     if len(error_list) > 0:
         remote = [ele for ele in error_list if "remote" in ele]
-        fatal = [ele for ele in error_list if "fatal" in ele]
         if len(remote) > 0:
             remote_list = remote[0].split(":")
             if len(remote_list) == 2:
                 value = remote_list[1].strip()
         else:
             value = result.stderr.strip()
-        if len(fatal):
-            fatal_list = fatal[0].split(":")
-            if len(fatal_list) == 2:
-                value = fatal_list[1].strip()
     if result_code == 0:
         success = True
         msg_ret = f"Cloned content <{_path_clone}> removed"
@@ -148,7 +130,7 @@ def rm_clone(_path_clone):
         success = False
         msg_ret = f"Error removing cloned content <{_path_clone}. Error: <{value}>"
     return success, msg_ret
-    
+
 
 def main():
     module = AnsibleModule(
@@ -183,3 +165,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

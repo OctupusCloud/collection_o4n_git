@@ -29,7 +29,6 @@ options:
         description:
             branch to be used
         required: True
-        default: M
     remote:
         description:
             repository to be set as remote by git
@@ -52,7 +51,7 @@ tasks:
         path: /src/path
       register: salida
 
-  - name: Delete git remote
+  - name: Set remote
      o4n_git_set_remote:
         state: absent
         remote: git@github.com:repository.git
