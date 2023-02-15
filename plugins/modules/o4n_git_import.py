@@ -161,10 +161,10 @@ def main():
         )
     )
 
-    token = module.params.get("token"),
-    repo = module.params.get("repo"),
-    path_clone = module.params.get("path_clone"),
-    path_import = module.params.get("path_import"),
+    token = module.params.get("token")
+    repo = module.params.get("repo")
+    path_clone = module.params.get("path_clone")
+    path_import = module.params.get("path_import")
     content = module.params.get("content")
 
     ret_msg = {}
