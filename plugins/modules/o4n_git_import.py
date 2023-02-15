@@ -62,12 +62,11 @@ tasks:
 
 from ansible.module_utils.basic import AnsibleModule
 import subprocess
-import re
 import glob
 
 
 def import_from_repo_token(_repo, _token, _path_clone):
-    _repo_name = _repo.replace("https://","")
+    _repo_name = _repo.replace("https://", "")
     cmd_git = f"git clone https://{_token}@{_repo_name} {_path_clone}"
     cmd_list = cmd_git.split()
     result = subprocess.run(cmd_list, text=True, capture_output=True)
@@ -96,7 +95,7 @@ def import_from_repo_token(_repo, _token, _path_clone):
 
 
 def cp_content(_path_clone, _path_import, _content):
-    result = subprocess.run(['cp', '-r'] + glob.glob(_path_clone+"/"+_content) + [_path_import], text=True, capture_output=True )
+    result = subprocess.run(['cp', '-r'] + glob.glob(_path_clone+"/"+_content) + [_path_import], text=True, capture_output=True)
     result_code = result.returncode
     value = "source file does not exist"
     if result_code == 0:
@@ -162,6 +161,7 @@ def main():
         module.exit_json(failed=False, msg=ret_msg)
     else:
         module.fail_json(failed=True, msg=ret_msg)
+
 
 if __name__ == "__main__":
     main()
