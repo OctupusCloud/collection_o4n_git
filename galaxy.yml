@@ -2,13 +2,13 @@
 # The namespace of the collection. This can be a company/brand/organization or product namespace under which all
 # content lives. May only contain alphanumeric lowercase characters and underscores. Namespaces cannot start with
 # underscores or numbers and cannot contain consecutive underscores
-namespace: escrimaglia
+namespace: octupus
 
 # The name of the collection. Has the same character restrictions as 'namespace'
-name: devs_git
+name: o4n_dev_git
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.2
+version: 2.0.0
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -16,12 +16,12 @@ readme: README.md
 # A list of the collection's content authors. Can be just the name or in the format 'Full Name <email> (url)
 # @nicks:irc/im.site#channel'
 authors:
-- "Ed Scrimaglia <edgardo.scrimaglia@gmail.com>"
+- "Ed Scrimaglia <edscrimaglia@octupus.com>"
 
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection
-description: Oction+ Automation collection 
+description: Collection for working with Git 
 
 # Either a single license or a list of licenses for content inside of a collection. Ansible Galaxy currently only
 # accepts L(SPDX,https://spdx.org/licenses/) licenses. This key is mutually exclusive with 'license_file'
@@ -34,7 +34,7 @@ license_file: ''
 
 # A list of tags you want to associate with the collection for indexing/searching. A tag name has the same character
 # requirements as 'namespace' and 'name'
-tags: ["automation","oction"]
+tags: ["automation","octupus","git"]
 
 # Collections that this collection requires to be installed for it to be usable. The key of the dict is the
 # collection label 'namespace.name'. The value is a version range
@@ -46,10 +46,10 @@ dependencies: {}
 repository: https://github.com/OctupusCloud/collection_o4n_git
 
 # The URL to any online docs
-documentation: http://docs.example.com
+documentation: https://git-scm.com/doc
 
 # The URL to the homepage of the collection/project
-homepage: http://example.com
+homepage: https://www.octupus.com/
 
 # The URL to the collection issue tracker
 issues: http://example.com/issue/tracker

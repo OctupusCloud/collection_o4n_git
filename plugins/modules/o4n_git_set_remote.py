@@ -126,8 +126,8 @@ def main():
             state=dict(required=True, type='str', choices=["present", "absent"]),
             origin=dict(required=False, type='str', default='origin'),
             branch=dict(required=False, type='str', default='main'),
-            remote=dict(required=True),
-            path=dict(required=False, default='./')
+            remote=dict(required=True, type='str'),
+            path=dict(required=False, type='str', default='./')
         )
     )
 
