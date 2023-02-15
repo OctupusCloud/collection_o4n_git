@@ -1,9 +1,0 @@
-{
-    "ANSIBLE_MODULE_ARGS": {
-        "token": "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",
-        "repo": "https://github.com/OctupusCloud/PICH_ABM_VLANS_CONF_FILES_TEST.git",
-        "path_clone": "./temp",
-        "path_import": "./docs",
-        "content": "Doc*"
-    } 
-}
