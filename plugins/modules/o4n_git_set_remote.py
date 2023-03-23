@@ -174,9 +174,9 @@ def main():
 
 # Retorno del módulo
     if module_success:
-        module.exit_json(failed=False, content=Output)
+        module.exit_json(failed=False, msg=Output)
     else:
-        module.fail_json(failed=True, content=Output)
+        module.fail_json(failed=True, msg=Output)
 
 
 if __name__ == "__main__":
