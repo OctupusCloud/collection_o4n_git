@@ -94,8 +94,8 @@ def get_remote(_origin, _repo, _path):
 
 def set_remote(_path, _state, _origin, _remote_repo, _branch):
     try:
+        os.chdir(_path)
         if _state == 'present':
-            os.chdir(_path)
             os.system("git init")
             os.system("git config user.name 'oction automation'")
             os.system("git config user.email 'oction@octupus.com'")
