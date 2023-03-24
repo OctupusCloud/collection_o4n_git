@@ -138,39 +138,26 @@ def main():
 
 # Lógica del modulo
     module_success = False
-    msg_get_remote, exist_remote, result = get_remote(origin, remote, path)
-    if exist_remote and state == 'present':
+    if state == "present":
+        msg_get_remote, exist_remote, success = get_remote(origin, remote, path)
         Output['state'] = 'present'
         Output['msg'] = msg_get_remote
         Output['remote'] = remote
-        module_success = True
-    elif exist_remote and state == 'absent':
-        msg_remote, success = set_remote(path, state, origin, remote, branch)
-        if success:
-            Output['state'] = 'absent'
-            Output['msg'] = msg_remote
-            Output['remote'] = remote
+        if exist_remote:
             module_success = True
         else:
-            Output['state'] = 'absent'
+            msg_remote, success = set_remote(path, state, origin, remote, branch)
+            Output['state'] = 'present'
             Output['msg'] = msg_remote
             Output['remote'] = remote
-    elif not exist_remote and state == 'absent':
-        Output['state'] = 'absent'
-        Output['msg'] = f"remote {remote} is unset, can not be removed"
-        Output['remote'] = remote
-        module_success = True
+            if success:
+                module_success = True
     else:
         msg_remote, success = set_remote(path, state, origin, remote, branch)
-        if success:
-            Output['state'] = 'present'
-            Output['msg'] = msg_remote
-            Output['remote'] = remote
-            module_success = True
-        else:
-            Output['state'] = 'present'
-            Output['msg'] = msg_remote
-            Output['remote'] = remote
+        Output['state'] = 'absent'
+        Output['msg'] = msg_remote
+        Output['remote'] = remote
+        module_success = True
 
 # Retorno del módulo
     if module_success:
