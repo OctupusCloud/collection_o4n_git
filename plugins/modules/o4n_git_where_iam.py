@@ -54,7 +54,6 @@ def get_current_dir(_state):
 
 # Main
 def main():
-    Output = {}
     module = AnsibleModule(
         argument_spec=dict(
             state=dict(required=True, type='str', choices=["present", "absent"]),
@@ -64,7 +63,6 @@ def main():
     state = module.params.get("state")
 
 # Lógica del modulo
-    module_success = False
     msg_get, success = get_current_dir(state)
     
 # Retorno del módulo
