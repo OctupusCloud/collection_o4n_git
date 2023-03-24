@@ -37,19 +37,23 @@ from ansible.module_utils.basic import AnsibleModule
 def get_current_dir(_state):
     ret_msg = ""
     success = False
+    output = {}
     if _state == "present":
         try:
             current_dir = os.getcwd()
-            ret_msg = f"Current directory is  {current_dir}"
+            ret_msg = f"Current directory was registerd"
+            output["directory"] = current_dir
             success = True
         except Exception as error:
             success = False
+            output["directory"] = "unknown"
             ret_msg = f"Current directory can not be gathered, error: {error}"
     else:
         success = True
+        output["directory"] = "unknown"
         ret_msg = f"Set parameter values is {_state}, set parameter value to present"
 
-    return ret_msg, success
+    return ret_msg, success, output
 
 
 # Main
@@ -63,13 +67,13 @@ def main():
     state = module.params.get("state")
 
 # Lógica del modulo
-    msg_get, success = get_current_dir(state)
+    msg_get, success, output = get_current_dir(state)
     
 # Retorno del módulo
     if success:
-        module.exit_json(failed=False, msg="success", content=msg_get)
+        module.exit_json(failed=False, msg=msg_get, content=output)
     else:
-        module.fail_json(failed=True, msg="fail", content=msg_get)
+        module.fail_json(failed=True, msg=msg_get, content=output)
 
 
 if __name__ == "__main__":
