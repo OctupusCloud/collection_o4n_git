@@ -10,9 +10,9 @@ version_added: "2.0"
 author: "Ed Scrimaglia"
 short_description: push content to a Git repository
 description:
-    - "Add files for trucking"
-    - "Commit -a"
-    - "Push content"
+    - Add files for trucking
+    - Commit
+    - Push content
 notes:
     - Testeado en linux
 options:
@@ -29,7 +29,7 @@ options:
         description:
             files to be tracked by Git
         required: False
-        default: "." meaning all files and directories
+        default: "."
     force:
         description:
             define if push will be forced
