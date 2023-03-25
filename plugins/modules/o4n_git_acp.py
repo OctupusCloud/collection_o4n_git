@@ -59,7 +59,7 @@ def git_acp(_origin, _branch, _comment, _add_files, _force):
     output = {}
     try:
         force_param = "--force" if _force else ""
-        set_add_command = f"git add {_add_files}"
+        set_add_command = f"git add '{_add_files}'"
         os.system(set_add_command)
         set_commit_command = f"git commit -a -m {_comment}"
         os.system(set_commit_command)
@@ -68,12 +68,13 @@ def git_acp(_origin, _branch, _comment, _add_files, _force):
         success = True
         output = {
             "add": f"Files added for tracking: {_add_files}",
-            "commit": f"Commit type -a, comment: {_comment}",
-            "push": f"Push to {_origin}, branch {_branch} has been successful"
+            "commit": f"Commit type -a",
+            "comment": f"Commit comment: {_comment}",
+            "push": f"Pushing branch {_branch} to {_origin} has been successful"
         }
     except Exception as error:
         success = False
-        output = {"push": f"Push to {_origin}, branch {_branch} has failed. Error {error}"}
+        output = {"push": f"Pushing branch {_branch} to {_origin} has failed. Error {error}"}
 
     return output, success
 
@@ -95,7 +96,7 @@ def main():
     branch = module.params.get("branch")
     files = module.params.get("files")
     comment = module.params.get("comment")
-    force = module.params.get("comment")
+    force = module.params.get("force")
 
     # Lógica del modulo
     Output, success = git_acp(origin, branch, comment, files, force)
