@@ -16,10 +16,6 @@ description:
 notes:
     - Testeado en linux
 options:
-    state:
-        description:
-            set or unset git remote
-        required: True
     origin:
         description:
             the origin
@@ -44,19 +40,11 @@ EXAMPLES = """
 tasks:
   - name: Set remote
       o4n_git_set_remote:
-        state: present
         origin: origin
         branch: main
         remote: git@github.com:repository.git
         path: /src/path
       register: salida
-
-  - name: Set remote
-     o4n_git_set_remote:
-        state: absent
-        remote: git@github.com:repository.git
-        path: /src/path
-    register: salida
 """
 
 # Python Modules
@@ -65,51 +53,47 @@ from ansible.module_utils.basic import AnsibleModule
 
 
 # Functions
-def get_remote(_origin, _repo, _path):
-    ret_msg = ""
-    exist_remote = False
-    success = False
+# def get_remote(_origin, _repo, _path):
+#     ret_msg = ""
+#     exist_remote = False
+#     success = False
+#     try:
+#         os.chdir(_path)
+#         with os.popen("git remote -v") as f:
+#             lines = f.readlines()
+#         if len(lines) == 2:
+#             push = lines[1]
+#             repo = push.split("\t")
+#             if _origin in repo[0] and _repo in repo[1]:
+#                 exist_remote = True
+#                 ret_msg = f"remote {_origin} / {_repo} already exist"
+#             else:
+#                 exist_remote = False
+#                 ret_msg = f"remote {_origin} / {_repo} is unset"
+#         else:
+#             ret_msg = f"remote {_origin} / {_repo} is unset"
+#         success = True
+#     except Exception as error:
+#         success = False
+#         ret_msg = f"Git remote status can not be gathered, error: {error}"
+
+#     return ret_msg, exist_remote, success
+
+
+def set_remote(_path, _origin, _remote_repo, _branch):
     try:
         os.chdir(_path)
-        with os.popen("git remote -v") as f:
-            lines = f.readlines()
-        if len(lines) == 2:
-            push = lines[1]
-            repo = push.split("\t")
-            if _origin in repo[0] and _repo in repo[1]:
-                exist_remote = True
-                ret_msg = f"remote {_origin} / {_repo} already exist"
-            else:
-                exist_remote = False
-                ret_msg = f"remote {_origin} / {_repo} is unset"
-        else:
-            ret_msg = f"remote {_origin} / {_repo} is unset"
+        set_remote_command = f"git remote remove {_origin}"
+        os.system(set_remote_command)
+        os.system("git init")
+        os.system("git config user.name 'oction automation'")
+        os.system("git config user.email 'oction@octupus.com'")
+        set_branch_command = f"git branch -M {_branch}"
+        os.system(set_branch_command)
+        set_remote_command = f"git remote add {_origin} {_remote_repo}"
+        os.system(set_remote_command)
+        msg = f"Remote {_remote_repo} set successfully, branch {_branch}"
         success = True
-    except Exception as error:
-        success = False
-        ret_msg = f"Git remote status can not be gathered, error: {error}"
-
-    return ret_msg, exist_remote, success
-
-
-def set_remote(_path, _state, _origin, _remote_repo, _branch):
-    try:
-        os.chdir(_path)
-        if _state == 'present':
-            os.system("git init")
-            os.system("git config user.name 'oction automation'")
-            os.system("git config user.email 'oction@octupus.com'")
-            set_branch_command = f"git branch -M {_branch}"
-            os.system(set_branch_command)
-            set_remote_command = f"git remote add {_origin} {_remote_repo}"
-            os.system(set_remote_command)
-            success = True
-            msg = f"Remote {_remote_repo} set successfully, branch {_branch}"
-        else:
-            set_remote_command = f"git remote remove {_origin}"
-            os.system(set_remote_command)
-            success = True
-            msg = f"Remote {_remote_repo} removed"
     except Exception as error:
         success = False
         msg = f"Remote can not be set, error: {error}"
@@ -122,7 +106,6 @@ def main():
     Output = {}
     module = AnsibleModule(
         argument_spec=dict(
-            state=dict(required=True, type='str', choices=["present", "absent"]),
             origin=dict(required=False, type='str', default='origin'),
             branch=dict(required=False, type='str', default='main'),
             remote=dict(required=True, type='str'),
@@ -130,37 +113,19 @@ def main():
         )
     )
 
-    state = module.params.get("state")
     origin = module.params.get("origin")
     branch = module.params.get("branch")
     remote = module.params.get("remote")
     path = module.params.get("path")
 
 # Lógica del modulo
-    module_success = False
-    if state == "present":
-        msg_get_remote, exist_remote, success = get_remote(origin, remote, path)
-        Output['state'] = 'present'
-        Output['msg'] = msg_get_remote
-        Output['remote'] = remote
-        if exist_remote:
-            module_success = True
-        else:
-            msg_remote, success = set_remote(path, state, origin, remote, branch)
-            Output['state'] = 'present'
-            Output['msg'] = msg_remote
-            Output['remote'] = remote
-            if success:
-                module_success = True
-    else:
-        msg_remote, success = set_remote(path, state, origin, remote, branch)
-        Output['state'] = 'absent'
-        Output['msg'] = msg_remote
-        Output['remote'] = remote
-        module_success = True
+    msg_remote, success = set_remote(path, origin, remote, branch)
+    Output['state'] = 'present'
+    Output['msg'] = msg_remote
+    Output['remote'] = remote
 
 # Retorno del módulo
-    if module_success:
+    if success:
         module.exit_json(failed=False, msg="success", content=Output)
     else:
         module.fail_json(failed=True, msg="fail", content=Output)
