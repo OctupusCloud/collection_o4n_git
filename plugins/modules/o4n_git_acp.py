@@ -61,7 +61,7 @@ def git_acp(_origin, _branch, _comment, _add_files, _force):
         force_param = "--force" if _force else ""
         set_add_command = f"git add '{_add_files}'"
         os.system(set_add_command)
-        set_commit_command = f"git commit -a -m {_comment}"
+        set_commit_command = f"git commit -m {_comment}"
         os.system(set_commit_command)
         set_push_command = f"git push {force_param} {_origin} {_branch}"
         os.system(set_push_command)
