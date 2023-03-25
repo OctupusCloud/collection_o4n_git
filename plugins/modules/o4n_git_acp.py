@@ -10,15 +10,15 @@ version_added: "2.0"
 author: "Ed Scrimaglia"
 short_description: push content to a Git repository
 description:
-    - Add files for trucking
-    - Commit -a
-    - Push content
+    - "Add files for trucking"
+    - "Commit -a"
+    - "Push content"
 notes:
     - Testeado en linux
 options:
     origin:
         description:
-            the origin name in the URL set in Git remote 
+            the origin name in the URL set in Git remote
         required: True
     branch:
         description:
@@ -32,7 +32,7 @@ options:
         default: "." meaning all files and directories
     force:
         description:
-            define if push will be forced 
+            define if push will be forced
         required: False
         default: False
 """
@@ -67,9 +67,9 @@ def git_acp(_origin, _branch, _comment, _add_files, _force):
         os.system(set_push_command)
         success = True
         output = {"add": f"Files added for tracking: {_add_files}",
-                   "commit": f"Commit type -a, comment: {_comment}",
-                   "push": f"Push to {_origin}, branch {_branch} has been successful"
-                   }
+                  "commit": f"Commit type -a, comment: {_comment}",
+                  "push": f"Push to {_origin}, branch {_branch} has been successful"
+        }
     except Exception as error:
         success = False
         output = {"push": f"Push to {_origin}, branch {_branch} has failed"}
@@ -86,7 +86,7 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=False, type='str', choises=['True','False'], default='False')
+            force=dict(required=False, type='str', choises=['True', 'False'], default='False')
         )
     )
 
@@ -99,7 +99,6 @@ def main():
     # Lógica del modulo
     Output, success = git_acp(origin, branch, comment, files, force)
 
-
     # Retorno del módulo
     if success:
         module.exit_json(failed=False, msg="success", content=Output)
@@ -109,4 +108,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
