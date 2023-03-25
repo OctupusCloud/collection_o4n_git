@@ -24,7 +24,7 @@ options:
         description:
             the branch name to be pushed
         required: False
-        fefault: main
+        default: main
     files:
         description:
             files to be tracked by Git
@@ -66,13 +66,14 @@ def git_acp(_origin, _branch, _comment, _add_files, _force):
         set_push_command = f"git push {force_param} {_origin} {_branch}"
         os.system(set_push_command)
         success = True
-        output = {"add": f"Files added for tracking: {_add_files}",
-                  "commit": f"Commit type -a, comment: {_comment}",
-                  "push": f"Push to {_origin}, branch {_branch} has been successful"
+        output = {
+            "add": f"Files added for tracking: {_add_files}",
+            "commit": f"Commit type -a, comment: {_comment}",
+            "push": f"Push to {_origin}, branch {_branch} has been successful"
         }
     except Exception as error:
         success = False
-        output = {"push": f"Push to {_origin}, branch {_branch} has failed"}
+        output = {"push": f"Push to {_origin}, branch {_branch} has failed. Error {error}"}
 
     return output, success
 
