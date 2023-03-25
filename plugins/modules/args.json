@@ -1,8 +1,0 @@
-{
-    "ANSIBLE_MODULE_ARGS": {
-        "origin": "origin",
-        "files": ".",
-        "branch": "main",
-        "force": false
-    } 
-}

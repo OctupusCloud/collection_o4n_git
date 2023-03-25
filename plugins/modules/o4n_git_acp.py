@@ -35,6 +35,10 @@ options:
             define if push will be forced
         required: False
         default: False
+    path:
+        description:
+            path where add, commit and push must be applied
+        required: True
 """
 
 EXAMPLES = """
@@ -43,6 +47,7 @@ tasks:
       o4n_git_acp:
         origin: origin
         branch: main
+        path: "./"
         files: "*.txt"
         comment: Refactoring
         force: true
@@ -55,11 +60,12 @@ from ansible.module_utils.basic import AnsibleModule
 
 
 # Methods
-def git_acp(_origin, _branch, _comment, _add_files, _force):
+def git_acp(_origin, _branch, _comment, _files, _force, _path):
     output = {}
     try:
+        os.chdir(_path)
         force_param = "--force" if _force else ""
-        set_add_command = f"git add '{_add_files}'"
+        set_add_command = f"git add {_files}"
         os.system(set_add_command)
         set_commit_command = f"git commit -m {_comment}"
         os.system(set_commit_command)
@@ -67,9 +73,9 @@ def git_acp(_origin, _branch, _comment, _add_files, _force):
         os.system(set_push_command)
         success = True
         output = {
-            "add": f"Files added for tracking: {_add_files}",
+            "add": f"Files added for tracking: {_files}",
             "commit": f"Commit type -a",
-            "comment": f"Commit comment: {_comment}",
+            "comment": f"{_comment}",
             "push": f"Pushing branch {_branch} to {_origin} has been successful"
         }
     except Exception as error:
@@ -88,7 +94,8 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=False, type='str', choises=['True', 'False'], default='False')
+            force=dict(required=False, type='str', choises=['True', 'False'], default='False'),
+            path=dict(required=True, type='str')
         )
     )
 
@@ -97,9 +104,10 @@ def main():
     files = module.params.get("files")
     comment = module.params.get("comment")
     force = module.params.get("force")
+    path = module.params.get("path")
 
     # Lógica del modulo
-    Output, success = git_acp(origin, branch, comment, files, force)
+    Output, success = git_acp(origin, branch, comment, files, force, path)
 
     # Retorno del módulo
     if success:
