@@ -65,7 +65,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
     try:
         os.chdir(_path)
         force_param = "--force" if _force else ""
-        set_add_command = f"git add {_files}"
+        set_add_command = f"git add '{_files}'"
         os.system(set_add_command)
         set_commit_command = f"git commit -m '{_comment}'"
         os.system(set_commit_command)
