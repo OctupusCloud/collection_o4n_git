@@ -67,15 +67,14 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         force_param = "--force" if _force else ""
         set_add_command = f"git add {_files}"
         os.system(set_add_command)
-        set_commit_command = f"git commit -m {_comment}"
+        set_commit_command = f"git commit -m '{_comment}'"
         os.system(set_commit_command)
         set_push_command = f"git push {force_param} {_origin} {_branch}"
         os.system(set_push_command)
         success = True
         output = {
             "add": f"Files added for tracking: {_files}",
-            "commit": f"Commit type -a",
-            "comment": f"{_comment}",
+            "commit": f"Commit -m {_comment}",
             "push": f"Pushing branch {_branch} to {_origin} has been successful"
         }
     except Exception as error:
