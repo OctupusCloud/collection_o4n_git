@@ -65,8 +65,6 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
     output = {}
     try:
         os.chdir(_path)
-        force = "--force" if _force else ""
-
         # git add
         set_command = f"git add {_files}"
         cmd_list = set_command.split()
@@ -96,8 +94,9 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
             pass
 
         # git push
+        force = "--force" if _force else ""
         set_command = f"git push {force} {_origin} {_branch}"
-        # os.system(set_command)
+        output['force'] = force
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
@@ -140,7 +139,7 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=True, type='str', choises=['true', 'false']),
+            force=dict(required=True, type='str', choises=["present", "absent"]),
             path=dict(required=True, type='str')
         )
     )
@@ -153,6 +152,7 @@ def main():
     path = module.params.get("path")
 
     # Lógica del modulo
+    force = "--force" if force.lower() in ["present"] else ""
     Output, success = git_acp(origin, branch, comment, files, force, path)
 
     # Retorno del módulo
