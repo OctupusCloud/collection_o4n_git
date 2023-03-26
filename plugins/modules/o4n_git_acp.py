@@ -10,6 +10,7 @@ version_added: "2.0"
 author: "Ed Scrimaglia"
 short_description: push content to a Git repository
 description:
+    - Set remote parameters
     - Add files for trucking
     - Commit
     - Push content
@@ -71,46 +72,48 @@ output = {}
 
 
 # Methods
-def get_current_dir():
-    global output
-    success = False
-    try:
-        current_dir = os.getcwd()
-        success = True
-        directory = current_dir
-    except Exception:
-        directory = "unknown"
+# def get_current_dir():
+#     global output
+#     success = False
+#     try:
+#         current_dir = os.getcwd()
+#         success = True
+#         directory = current_dir
+#     except Exception:
+#         directory = "unknown"
 
-    return success, directory
+#     return success, directory
 
 
 def set_remote(_path, _origin, _remote_repo, _branch):
     global output
     success = False
-    working_path = ""
-    _path = re.sub(r"^\.", "", _path)
-    _path = re.sub(r"^\/", "", _path)
+    # working_path = ""
+    # _path = re.sub(r"^\.", "", _path)
+    # _path = re.sub(r"^\/", "", _path)
     try:
-        success_dir, working_dir = get_current_dir()
-        if success_dir:
-            working_path = working_dir + "/" + _path
-            output['directory'] = working_path
-            os.chdir(working_path)
-            set_remote_command = f"git remote remove {_origin}"
-            os.system(set_remote_command)
-            os.system("git init")
-            os.system("git config user.name 'oction automation'")
-            os.system("git config user.email 'oction@octupus.com'")
-            set_branch_command = f"git branch -M {_branch}"
-            os.system(set_branch_command)
-            set_remote_command = f"git remote add {_origin} {_remote_repo}"
-            os.system(set_remote_command)
-            output['remote'] = f"Remote {_remote_repo} set successfully as {_origin}, branch {_branch}"
-            success = True
+        #success_dir, working_dir = get_current_dir()
+        #if success_dir:
+        #working_path = working_dir + "/" + _path
+        #output['directory'] = _path
+        os.chdir(_path)
+        output['directory'] = os.getcwd()
+        # set_remote_command = f"git remote remove {_origin}"
+        # os.system(set_remote_command)
+        # os.system("git init")
+        # os.system("git config user.name 'oction automation'")
+        # os.system("git config user.email 'oction@octupus.com'")
+        # set_branch_command = f"git branch -M {_branch}"
+        # os.system(set_branch_command)
+        # set_remote_command = f"git remote add {_origin} {_remote_repo}"
+        # os.system(set_remote_command)
+        os.system("ls -l")
+        output['remote'] = f"Remote {_remote_repo} set successfully as {_origin}, branch {_branch}"
+        success = True
     except Exception as error:
         output['remote'] = f"Remote {_remote_repo} can not be set, error: {error}"
 
-    return output, working_path, success
+    return output, success
 
 
 def git_acp(_origin, _branch, _comment, _files, _force, _path):
@@ -205,10 +208,10 @@ def main():
     path = module.params.get("path")
 
     # Lógica del modulo
-    output, working_path, success = set_remote(path, origin, remote, branch)
+    output, success = set_remote(path, origin, remote, branch)
     if success:
         force = "--force" if force.lower() in ["present"] else ""
-        output, success = git_acp(origin, branch, comment, files, force, working_path)
+        output, success = git_acp(origin, branch, comment, files, force, path)
 
     # Retorno del módulo
     if success:
