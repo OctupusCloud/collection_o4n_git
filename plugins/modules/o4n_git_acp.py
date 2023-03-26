@@ -173,7 +173,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         # else:
         #     output['remove'] = f"Origin {_origin} removed from git remote"
 
-        # success = True
+        success = True
 
     except Exception as error:
         success = False
