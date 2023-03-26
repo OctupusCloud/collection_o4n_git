@@ -66,8 +66,8 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
     try:
         os.chdir(_path)
         force_param = "--force" if _force else ""
+
         # git add
-        # os.system(set_command)
         set_command = f"git add {_files}"
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
@@ -99,6 +99,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         set_command = f"git push {force_param} {_origin} {_branch}"
         # os.system(set_command)
         cmd_list = set_command.split()
+        output['cmd'] = cmd_list
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
             std_out = result.stdout.replace("\n", " ")
@@ -115,10 +116,10 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
             std_out = result.stdout.replace("\n", " ")
-            output['remove_remote'] = f"{std_out}"
+            output['remove'] = f"{std_out}"
         elif result.stderr:
             std_err = result.stderr.replace("\n", " ")
-            output['remove_remote'] = f"{std_err}"
+            output['remove'] = f"{std_err}"
         else:
             pass
 
