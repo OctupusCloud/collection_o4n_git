@@ -65,7 +65,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
     output = {}
     try:
         os.chdir(_path)
-        force_param = "--force" if _force else ""
+        force = "--force" if _force else ""
 
         # git add
         set_command = f"git add {_files}"
@@ -96,10 +96,10 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
             pass
 
         # git push
-        set_command = f"git push {force_param} {_origin} {_branch}"
+        set_command = f"git push {force} {_origin} {_branch}"
         # os.system(set_command)
         cmd_list = set_command.split()
-        output['cmd'] = cmd_list
+        output['cmd_push'] = cmd_list
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
             std_out = result.stdout.replace("\n", " ")
@@ -113,6 +113,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         # Delete remote settings
         set_command = f"git remote remove {_origin}"
         cmd_list = set_command.split()
+        output['cmd_remove'] = cmd_list
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
             std_out = result.stdout.replace("\n", " ")
@@ -141,7 +142,7 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=False, type='str', choises=['True', 'False'], default='False'),
+            force=dict(required=False, type=bool, choises=['True', 'False'], default=False),
             path=dict(required=True, type='str')
         )
     )
