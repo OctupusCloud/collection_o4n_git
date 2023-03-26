@@ -99,7 +99,6 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         set_command = f"git push {force} {_origin} {_branch}"
         # os.system(set_command)
         cmd_list = set_command.split()
-        output['cmd_push'] = cmd_list
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
             std_out = result.stdout.replace("\n", " ")
@@ -113,7 +112,6 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         # Delete remote settings
         set_command = f"git remote remove {_origin}"
         cmd_list = set_command.split()
-        output['cmd_remove'] = cmd_list
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
             std_out = result.stdout.replace("\n", " ")
@@ -122,7 +120,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
             std_err = result.stderr.replace("\n", " ")
             output['remove'] = f"{std_err}"
         else:
-            pass
+            output['remove'] = f"Origin {_origin} removed from git remote"
 
         success = True
 
@@ -142,7 +140,7 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=False, type=bool, choises=['True', 'False'], default=False),
+            force=dict(required=False, type=bool, choises=[True, False], default=False),
             path=dict(required=True, type='str')
         )
     )
