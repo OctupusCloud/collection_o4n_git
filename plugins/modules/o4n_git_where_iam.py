@@ -41,7 +41,7 @@ def get_current_dir(_state):
     if _state == "present":
         try:
             current_dir = os.getcwd()
-            ret_msg = f"Current directory was registerd"
+            ret_msg = "Current directory was registerd"
             output["directory"] = current_dir
             success = True
         except Exception as error:

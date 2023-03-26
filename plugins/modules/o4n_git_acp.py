@@ -79,8 +79,8 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
             pass
 
         # git commit
-        set_command = f"git commit -m"
-        #os.system(set_command)
+        set_command = "git commit -m"
+        # os.system(set_command)
         cmd_list = set_command.split()
         cmd_list.append(_comment)
         result = subprocess.run(cmd_list, text=True, capture_output=True)
@@ -93,7 +93,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
 
         # git push
         set_command = f"git push {force_param} {_origin} {_branch}"
-        #os.system(set_command)
+        # os.system(set_command)
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
