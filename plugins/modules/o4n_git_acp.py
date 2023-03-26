@@ -76,12 +76,10 @@ def get_current_dir():
     success = False
     try:
         current_dir = os.getcwd()
-        output["directory"] = current_dir
         success = True
         directory = current_dir
     except Exception as error:
         directory = "unknown"
-        output["directory"] = f"Current directory can not be gathered, error: {error}"
 
     return success, directory
 
@@ -90,12 +88,13 @@ def set_remote(_path, _origin, _remote_repo, _branch):
     global output
     success = False
     working_path = ""
-    _path  = re.sub(r"^\.", "", _path)
-    _path  = re.sub(r"^\/", "", _path)
+    _path = re.sub(r"^\.", "", _path)
+    _path = re.sub(r"^\/", "", _path)
     try:
         success_dir, working_dir = get_current_dir()
         if success_dir:
-            working_path = working_dir + "/" + _path 
+            working_path = working_dir + "/" + _path
+            output['directory'] = working_path
             os.chdir(working_path)
             set_remote_command = f"git remote remove {_origin}"
             os.system(set_remote_command)
