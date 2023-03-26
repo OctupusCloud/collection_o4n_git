@@ -39,6 +39,11 @@ options:
         description:
             path where add, commit and push must be applied
         required: True
+    remote:
+        description:
+            repository to be set as remote by git remote add
+        required: True
+
 """
 
 EXAMPLES = """
@@ -46,6 +51,7 @@ tasks:
   - name: Set remote
       o4n_git_acp:
         origin: origin
+        remote: git@github.com:repository.git
         branch: main
         path: "./"
         files: "*.txt"
@@ -59,10 +65,34 @@ import os
 import subprocess
 from ansible.module_utils.basic import AnsibleModule
 
+# Global Var
+output = {}
 
 # Methods
+def set_remote(_path, _origin, _remote_repo, _branch):
+    global output
+    try:
+        os.chdir(_path)
+        set_remote_command = f"git remote remove {_origin}"
+        os.system(set_remote_command)
+        os.system("git init")
+        os.system("git config user.name 'oction automation'")
+        os.system("git config user.email 'oction@octupus.com'")
+        set_branch_command = f"git branch -M {_branch}"
+        os.system(set_branch_command)
+        set_remote_command = f"git remote add {_origin} {_remote_repo}"
+        os.system(set_remote_command)
+        output['remote'] = f"Remote {_remote_repo} set successfully, branch {_branch}"
+        success = True
+    except Exception as error:
+        success = False
+        output['remote'] = f"Remote {_remote_repo} can not be set, error: {error}"
+
+    return output, success
+
+
 def git_acp(_origin, _branch, _comment, _files, _force, _path):
-    output = {}
+    global output
     try:
         os.chdir(_path)
         # git add
@@ -136,6 +166,7 @@ def main():
     module = AnsibleModule(
         argument_spec=dict(
             origin=dict(required=True, type='str'),
+            remote=dict(required=True, type='str'),
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
@@ -145,6 +176,7 @@ def main():
     )
 
     origin = module.params.get("origin")
+    remote = module.params.get("remote")
     branch = module.params.get("branch")
     files = module.params.get("files")
     comment = module.params.get("comment")
@@ -152,8 +184,10 @@ def main():
     path = module.params.get("path")
 
     # Lógica del modulo
-    force = "--force" if force.lower() in ["present"] else ""
-    Output, success = git_acp(origin, branch, comment, files, force, path)
+    Output, success = set_remote(path, origin, remote, branch)
+    if success:
+        force = "--force" if force.lower() in ["present"] else ""
+        Output, success = git_acp(origin, branch, comment, files, force, path)
 
     # Retorno del módulo
     if success:
