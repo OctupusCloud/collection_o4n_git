@@ -64,7 +64,6 @@ from ansible.module_utils.basic import AnsibleModule
 def git_acp(_origin, _branch, _comment, _files, _force, _path):
     output = {}
     try:
-        split_separator = "\n"
         os.chdir(_path)
         force_param = "--force" if _force else ""
         # git add
@@ -73,9 +72,11 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            output['add'] = f"{result.stdout}"
+            std_out = result.stdout.replace("\n"," ")
+            output['add'] = f"{std_out}"
         elif result.stderr:
-            output['add'] = f"{result.stderr}"
+            std_err = result.stderr.replace("\n"," ")
+            output['add'] = f"{std_err}"
         else:
             output['add'] = f"files {_files} tracked"
 
@@ -86,9 +87,11 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list.append(_comment)
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            output['commit'] = f"{result.stdout}"
+            std_out = result.stdout.replace("\n"," ")
+            output['commit'] = f"{std_out}"
         elif result.stderr:
-            output['commit'] = f"{result.stderr}"
+            std_err = result.stderr.replace("\n"," ")
+            output['commit'] = f"{std_err}"
         else:
             pass
 
@@ -98,18 +101,29 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            output['push'] = f"{result.stdout}"
+            std_out = result.stdout.replace("\n"," ")
+            output['push'] = f"{std_out}"
         elif result.stderr:
-            output['push'] = f"{result.stderr}"
+            std_err = result.stderr.replace("\n"," ")
+            output['push'] = f"{std_err}"
         else:
             pass
 
         success = True
-        # output = {
-        #     "add": f"Files added for tracking: {_files}",
-        #     "commit": f"Commit -m {_comment}",
-        #     "push": f"Pushing branch {_branch} to {_origin} has been successful"
-        # }
+        
+        # Delete remote settings
+        set_command = f"git remote remove {_origin}"
+        cmd_list = set_command.split()
+        result = subprocess.run(cmd_list, text=True, capture_output=True)
+        if result.stdout:
+            std_out = result.stdout.replace("\n"," ")
+            output['remove_remote'] = f"{std_out}"
+        elif result.stderr:
+            std_err = result.stderr.replace("\n"," ")
+            output['remove_remote'] = f"{std_err}"
+        else:
+            pass
+
     except Exception as error:
         success = False
         output = {"push": f"Pushing branch {_branch} to {_origin} has failed. Error {error}"}
