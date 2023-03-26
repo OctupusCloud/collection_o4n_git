@@ -70,23 +70,41 @@ output = {}
 
 
 # Methods
-def set_remote(_path, _origin, _remote_repo, _branch):
-    global output
+def get_current_dir():
+    success = False
+    output = {}
     try:
-        os.chdir(_path)
-        set_remote_command = f"git remote remove {_origin}"
-        os.system(set_remote_command)
-        os.system("git init")
-        os.system("git config user.name 'oction automation'")
-        os.system("git config user.email 'oction@octupus.com'")
-        set_branch_command = f"git branch -M {_branch}"
-        os.system(set_branch_command)
-        set_remote_command = f"git remote add {_origin} {_remote_repo}"
-        os.system(set_remote_command)
-        output['remote'] = f"Remote {_remote_repo} set successfully as {_origin}, branch {_branch}"
+        current_dir = os.getcwd()
+        output["directory"] = current_dir
         success = True
+        directory = current_dir
     except Exception as error:
         success = False
+        directory = "unknown"
+        output["directory"] = f"Current directory can not be gathered, error: {error}"
+
+    return success, directory
+
+
+def set_remote(_path, _origin, _remote_repo, _branch):
+    global output
+    success = False
+    try:
+        success_dir, working_dir = get_current_dir()
+        if success_dir:
+            os.chdir(working_dir + "/" + _path)
+            set_remote_command = f"git remote remove {_origin}"
+            os.system(set_remote_command)
+            os.system("git init")
+            os.system("git config user.name 'oction automation'")
+            os.system("git config user.email 'oction@octupus.com'")
+            set_branch_command = f"git branch -M {_branch}"
+            os.system(set_branch_command)
+            set_remote_command = f"git remote add {_origin} {_remote_repo}"
+            os.system(set_remote_command)
+            output['remote'] = f"Remote {_remote_repo} set successfully as {_origin}, branch {_branch}"
+            success = True
+    except Exception as error:
         output['remote'] = f"Remote {_remote_repo} can not be set, error: {error}"
 
     return output, success
