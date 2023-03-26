@@ -63,6 +63,7 @@ tasks:
 # Python Modules
 import os
 import subprocess
+import re
 from ansible.module_utils.basic import AnsibleModule
 
 # Global Var
@@ -79,7 +80,6 @@ def get_current_dir():
         success = True
         directory = current_dir
     except Exception as error:
-        success = False
         directory = "unknown"
         output["directory"] = f"Current directory can not be gathered, error: {error}"
 
@@ -89,10 +89,14 @@ def get_current_dir():
 def set_remote(_path, _origin, _remote_repo, _branch):
     global output
     success = False
+    working_path = ""
+    _path  = re.sub(r"^.", "", _path)
+    _path  = re.sub(r"^\/", "", _path)
     try:
         success_dir, working_dir = get_current_dir()
         if success_dir:
-            os.chdir(working_dir + "/" + _path)
+            working_path = working_dir + "/" + _path 
+            os.chdir(working_path)
             set_remote_command = f"git remote remove {_origin}"
             os.system(set_remote_command)
             os.system("git init")
@@ -107,7 +111,7 @@ def set_remote(_path, _origin, _remote_repo, _branch):
     except Exception as error:
         output['remote'] = f"Remote {_remote_repo} can not be set, error: {error}"
 
-    return output, success
+    return output, working_path, success
 
 
 def git_acp(_origin, _branch, _comment, _files, _force, _path):
@@ -203,16 +207,16 @@ def main():
     path = module.params.get("path")
 
     # Lógica del modulo
-    Output, success = set_remote(path, origin, remote, branch)
+    output, working_path, success = set_remote(path, origin, remote, branch)
     if success:
         force = "--force" if force.lower() in ["present"] else ""
-        Output, success = git_acp(origin, branch, comment, files, force, path)
+        output, success = git_acp(origin, branch, comment, files, force, working_path)
 
     # Retorno del módulo
     if success:
-        module.exit_json(failed=False, msg="success", content=Output)
+        module.exit_json(failed=False, msg="success", content=output)
     else:
-        module.fail_json(failed=True, msg="fail", content=Output)
+        module.fail_json(failed=True, msg="fail", content=output)
 
 
 if __name__ == "__main__":
