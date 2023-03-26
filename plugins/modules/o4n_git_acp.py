@@ -140,7 +140,7 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=True, type='str', choises=['true', 'false'], default='false'),
+            force=dict(required=True, type='str', choises=['true', 'false']),
             path=dict(required=True, type='str')
         )
     )
