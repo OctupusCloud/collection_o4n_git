@@ -108,7 +108,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
             output['push'] = f"{std_err}"
         else:
             pass
-        
+
         # Delete remote settings
         set_command = f"git remote remove {_origin}"
         cmd_list = set_command.split()
