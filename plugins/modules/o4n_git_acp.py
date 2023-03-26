@@ -68,6 +68,7 @@ from ansible.module_utils.basic import AnsibleModule
 # Global Var
 output = {}
 
+
 # Methods
 def set_remote(_path, _origin, _remote_repo, _branch):
     global output
@@ -82,7 +83,7 @@ def set_remote(_path, _origin, _remote_repo, _branch):
         os.system(set_branch_command)
         set_remote_command = f"git remote add {_origin} {_remote_repo}"
         os.system(set_remote_command)
-        output['remote'] = f"Remote {_remote_repo} set successfully, branch {_branch}"
+        output['remote'] = f"Remote {_remote_repo} set successfully as {_origin}, branch {_branch}"
         success = True
     except Exception as error:
         success = False
