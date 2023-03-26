@@ -78,7 +78,7 @@ def get_current_dir():
         current_dir = os.getcwd()
         success = True
         directory = current_dir
-    except Exception as error:
+    except Exception:
         directory = "unknown"
 
     return success, directory
