@@ -56,6 +56,7 @@ tasks:
 
 # Python Modules
 import os
+import subprocess
 from ansible.module_utils.basic import AnsibleModule
 
 
@@ -65,18 +66,49 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
     try:
         os.chdir(_path)
         force_param = "--force" if _force else ""
-        set_add_command = f"git add '{_files}'"
-        os.system(set_add_command)
-        set_commit_command = f"git commit -m '{_comment}'"
-        os.system(set_commit_command)
-        set_push_command = f"git push {force_param} {_origin} {_branch}"
-        os.system(set_push_command)
+        # git add
+        # os.system(set_command)
+        set_command = f"git add {_files}"
+        cmd_list = set_command.split()
+        result = subprocess.run(cmd_list, text=True, capture_output=True)
+        if result.stdout:
+            output['add'] = f"{result.stdout}"
+        elif result.stderr:
+            output['add'] = f"{result.stderr}"
+        else:
+            pass
+
+        # git commit
+        set_command = f"git commit -m"
+        #os.system(set_command)
+        cmd_list = set_command.split()
+        cmd_list.append(_comment)
+        result = subprocess.run(cmd_list, text=True, capture_output=True)
+        if result.stdout:
+            output['commit'] = f"{result.stdout}"
+        elif result.stderr:
+            output['commit'] = f"{result.stderr}"
+        else:
+            pass
+
+        # git push
+        set_command = f"git push {force_param} {_origin} {_branch}"
+        #os.system(set_command)
+        cmd_list = set_command.split()
+        result = subprocess.run(cmd_list, text=True, capture_output=True)
+        if result.stdout:
+            output['push'] = f"{result.stdout}"
+        elif result.stderr:
+            output['push'] = f"{result.stderr}"
+        else:
+            pass
+
         success = True
-        output = {
-            "add": f"Files added for tracking: {_files}",
-            "commit": f"Commit -m {_comment}",
-            "push": f"Pushing branch {_branch} to {_origin} has been successful"
-        }
+        # output = {
+        #     "add": f"Files added for tracking: {_files}",
+        #     "commit": f"Commit -m {_comment}",
+        #     "push": f"Pushing branch {_branch} to {_origin} has been successful"
+        # }
     except Exception as error:
         success = False
         output = {"push": f"Pushing branch {_branch} to {_origin} has failed. Error {error}"}
