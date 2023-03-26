@@ -68,7 +68,7 @@ def main():
 
 # Lógica del modulo
     msg_get, success, output = get_current_dir(state)
-    
+
 # Retorno del módulo
     if success:
         module.exit_json(failed=False, msg=msg_get, content=output)
