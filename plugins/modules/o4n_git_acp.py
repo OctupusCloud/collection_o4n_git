@@ -161,19 +161,19 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
             pass
 
         # Delete remote settings
-        set_command = f"git remote remove {_origin}"
-        cmd_list = set_command.split()
-        result = subprocess.run(cmd_list, text=True, capture_output=True)
-        if result.stdout:
-            std_out = result.stdout.replace("\n", " ")
-            output['remove'] = f"{std_out}"
-        elif result.stderr:
-            std_err = result.stderr.replace("\n", " ")
-            output['remove'] = f"{std_err}"
-        else:
-            output['remove'] = f"Origin {_origin} removed from git remote"
+        # set_command = f"git remote remove {_origin}"
+        # cmd_list = set_command.split()
+        # result = subprocess.run(cmd_list, text=True, capture_output=True)
+        # if result.stdout:
+        #     std_out = result.stdout.replace("\n", " ")
+        #     output['remove'] = f"{std_out}"
+        # elif result.stderr:
+        #     std_err = result.stderr.replace("\n", " ")
+        #     output['remove'] = f"{std_err}"
+        # else:
+        #     output['remove'] = f"Origin {_origin} removed from git remote"
 
-        success = True
+        # success = True
 
     except Exception as error:
         success = False
