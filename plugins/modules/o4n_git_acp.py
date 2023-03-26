@@ -44,6 +44,10 @@ options:
         description:
             repository to be set as remote by git remote add
         required: True
+    token:
+        description:
+            credential token type to access de repository
+        required: True
 
 """
 
@@ -64,7 +68,6 @@ tasks:
 # Python Modules
 import os
 import subprocess
-import re
 from ansible.module_utils.basic import AnsibleModule
 
 # Global Var
@@ -146,7 +149,6 @@ def git_acp(_origin, _branch, _comment, _files, _force, _token, _remote):
             success = True
         else:
             output['push'] = f"Pushing branch {_branch} to {_remote} has failed. Invalid {_remote}"
-
 
         # Delete remote settings
         # set_command = f"git remote remove {_origin}"
