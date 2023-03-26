@@ -52,34 +52,6 @@ import os
 from ansible.module_utils.basic import AnsibleModule
 
 
-# Functions
-# def get_remote(_origin, _repo, _path):
-#     ret_msg = ""
-#     exist_remote = False
-#     success = False
-#     try:
-#         os.chdir(_path)
-#         with os.popen("git remote -v") as f:
-#             lines = f.readlines()
-#         if len(lines) == 2:
-#             push = lines[1]
-#             repo = push.split("\t")
-#             if _origin in repo[0] and _repo in repo[1]:
-#                 exist_remote = True
-#                 ret_msg = f"remote {_origin} / {_repo} already exist"
-#             else:
-#                 exist_remote = False
-#                 ret_msg = f"remote {_origin} / {_repo} is unset"
-#         else:
-#             ret_msg = f"remote {_origin} / {_repo} is unset"
-#         success = True
-#     except Exception as error:
-#         success = False
-#         ret_msg = f"Git remote status can not be gathered, error: {error}"
-
-#     return ret_msg, exist_remote, success
-
-
 def set_remote(_path, _origin, _remote_repo, _branch):
     try:
         os.chdir(_path)
