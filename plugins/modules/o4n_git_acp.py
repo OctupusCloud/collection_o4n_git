@@ -72,8 +72,8 @@ output = {}
 
 # Methods
 def get_current_dir():
+    global output
     success = False
-    output = {}
     try:
         current_dir = os.getcwd()
         output["directory"] = current_dir
@@ -90,7 +90,7 @@ def set_remote(_path, _origin, _remote_repo, _branch):
     global output
     success = False
     working_path = ""
-    _path  = re.sub(r"^.", "", _path)
+    _path  = re.sub(r"^\.", "", _path)
     _path  = re.sub(r"^\/", "", _path)
     try:
         success_dir, working_dir = get_current_dir()
@@ -185,7 +185,6 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
 
 # Main
 def main():
-    Output = {}
     module = AnsibleModule(
         argument_spec=dict(
             origin=dict(required=True, type='str'),
