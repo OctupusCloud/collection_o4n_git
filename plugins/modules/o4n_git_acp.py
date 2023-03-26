@@ -72,42 +72,21 @@ output = {}
 
 
 # Methods
-# def get_current_dir():
-#     global output
-#     success = False
-#     try:
-#         current_dir = os.getcwd()
-#         success = True
-#         directory = current_dir
-#     except Exception:
-#         directory = "unknown"
-
-#     return success, directory
-
-
 def set_remote(_path, _origin, _remote_repo, _branch):
     global output
     success = False
-    # working_path = ""
-    # _path = re.sub(r"^\.", "", _path)
-    # _path = re.sub(r"^\/", "", _path)
     try:
-        #success_dir, working_dir = get_current_dir()
-        #if success_dir:
-        #working_path = working_dir + "/" + _path
-        #output['directory'] = _path
+        output['directory'] = _path
         os.chdir(_path)
-        output['directory'] = os.getcwd()
-        # set_remote_command = f"git remote remove {_origin}"
-        # os.system(set_remote_command)
-        # os.system("git init")
-        # os.system("git config user.name 'oction automation'")
-        # os.system("git config user.email 'oction@octupus.com'")
-        # set_branch_command = f"git branch -M {_branch}"
-        # os.system(set_branch_command)
-        # set_remote_command = f"git remote add {_origin} {_remote_repo}"
-        # os.system(set_remote_command)
-        os.system("ls -l")
+        set_remote_command = f"git remote remove {_origin}"
+        os.system(set_remote_command)
+        os.system("git init")
+        os.system("git config user.name 'oction automation'")
+        os.system("git config user.email 'oction@octupus.com'")
+        set_branch_command = f"git branch -M {_branch}"
+        os.system(set_branch_command)
+        set_remote_command = f"git remote add {_origin} {_remote_repo}"
+        os.system(set_remote_command)
         output['remote'] = f"Remote {_remote_repo} set successfully as {_origin}, branch {_branch}"
         success = True
     except Exception as error:
@@ -116,10 +95,10 @@ def set_remote(_path, _origin, _remote_repo, _branch):
     return output, success
 
 
-def git_acp(_origin, _branch, _comment, _files, _force, _path):
+def git_acp(_origin, _branch, _comment, _files, _force, _token, _remote):
     global output
+    success = False
     try:
-        os.chdir(_path)
         # git add
         set_command = f"git add {_files}"
         cmd_list = set_command.split()
@@ -135,7 +114,6 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
 
         # git commit
         set_command = "git commit -m"
-        # os.system(set_command)
         cmd_list = set_command.split()
         cmd_list.append(_comment)
         result = subprocess.run(cmd_list, text=True, capture_output=True)
@@ -150,18 +128,25 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
 
         # git push
         force = "--force" if _force else ""
-        set_command = f"git push {force} {_origin} {_branch}"
-        output['force'] = force
-        cmd_list = set_command.split()
-        result = subprocess.run(cmd_list, text=True, capture_output=True)
-        if result.stdout:
-            std_out = result.stdout.replace("\n", " ")
-            output['push'] = f"{std_out}"
-        elif result.stderr:
-            std_err = result.stderr.replace("\n", " ")
-            output['push'] = f"{std_err}"
+        remote_rep = _remote.strip().split('https://')
+        if len(remote_rep) == 2:
+            repo_name = remote_rep[-1]
+            set_command = f"git push {force} https://{_token}@{repo_name}"
+            output['force'] = force
+            cmd_list = set_command.split()
+            result = subprocess.run(cmd_list, text=True, capture_output=True)
+            if result.stdout:
+                std_out = result.stdout.replace("\n", " ")
+                output['push'] = f"{std_out}"
+            elif result.stderr:
+                std_err = result.stderr.replace("\n", " ")
+                output['push'] = f"{std_err}"
+            else:
+                pass
+            success = True
         else:
-            pass
+            output['push'] = f"Pushing branch {_branch} to {_remote} has failed. Invalid {_remote}"
+
 
         # Delete remote settings
         # set_command = f"git remote remove {_origin}"
@@ -176,11 +161,9 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         # else:
         #     output['remove'] = f"Origin {_origin} removed from git remote"
 
-        success = True
-
     except Exception as error:
         success = False
-        output = {"push": f"Pushing branch {_branch} to {_origin} has failed. Error {error}"}
+        output = {"push": f"Pushing branch {_branch} to {_remote} has failed. Error {error}"}
 
     return output, success
 
@@ -195,7 +178,8 @@ def main():
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
             force=dict(required=False, type='str', default='present'),
-            path=dict(required=True, type='str')
+            path=dict(required=True, type='str'),
+            token=dict(required=True, type='str')
         )
     )
 
@@ -206,12 +190,13 @@ def main():
     comment = module.params.get("comment")
     force = module.params.get("force")
     path = module.params.get("path")
+    token = module.params.get("token")
 
     # Lógica del modulo
     output, success = set_remote(path, origin, remote, branch)
     if success:
         force = "--force" if force.lower() in ["present"] else ""
-        output, success = git_acp(origin, branch, comment, files, force, path)
+        output, success = git_acp(origin, branch, comment, files, force, token, remote)
 
     # Retorno del módulo
     if success:
