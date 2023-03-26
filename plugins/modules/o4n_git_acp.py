@@ -86,9 +86,9 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list.append(_comment)
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            output['add'] = f"{result.stdout.split(split_separator)}"
+            output['commit'] = f"{result.stdout.split(split_separator)}"
         elif result.stderr:
-            output['add'] = f"{result.stderr.split(split_separator)}"
+            output['commit'] = f"{result.stderr.split(split_separator)}"
         else:
             pass
 
@@ -98,9 +98,9 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            output['add'] = f"{result.stdout.split(split_separator)}"
+            output['push'] = f"{result.stdout.split(split_separator)}"
         elif result.stderr:
-            output['add'] = f"{result.stderr.split(split_separator)}"
+            output['push'] = f"{result.stderr.split(split_separator)}"
         else:
             pass
 
