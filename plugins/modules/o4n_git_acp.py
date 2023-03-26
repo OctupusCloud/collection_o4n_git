@@ -72,10 +72,10 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            std_out = result.stdout.replace("\n"," ")
+            std_out = result.stdout.replace("\n", " ")
             output['add'] = f"{std_out}"
         elif result.stderr:
-            std_err = result.stderr.replace("\n"," ")
+            std_err = result.stderr.replace("\n", " ")
             output['add'] = f"{std_err}"
         else:
             output['add'] = f"files {_files} tracked"
@@ -87,10 +87,10 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list.append(_comment)
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            std_out = result.stdout.replace("\n"," ")
+            std_out = result.stdout.replace("\n", " ")
             output['commit'] = f"{std_out}"
         elif result.stderr:
-            std_err = result.stderr.replace("\n"," ")
+            std_err = result.stderr.replace("\n", " ")
             output['commit'] = f"{std_err}"
         else:
             pass
@@ -101,10 +101,10 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            std_out = result.stdout.replace("\n"," ")
+            std_out = result.stdout.replace("\n", " ")
             output['push'] = f"{std_out}"
         elif result.stderr:
-            std_err = result.stderr.replace("\n"," ")
+            std_err = result.stderr.replace("\n", " ")
             output['push'] = f"{std_err}"
         else:
             pass
@@ -116,10 +116,10 @@ def git_acp(_origin, _branch, _comment, _files, _force, _path):
         cmd_list = set_command.split()
         result = subprocess.run(cmd_list, text=True, capture_output=True)
         if result.stdout:
-            std_out = result.stdout.replace("\n"," ")
+            std_out = result.stdout.replace("\n", " ")
             output['remove_remote'] = f"{std_out}"
         elif result.stderr:
-            std_err = result.stderr.replace("\n"," ")
+            std_err = result.stderr.replace("\n", " ")
             output['remove_remote'] = f"{std_err}"
         else:
             pass
