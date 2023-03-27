@@ -10,10 +10,7 @@ Ansible >= 2.10
 ## Modules
 
 - o4n_git_acp  
-  Add, Commit and Push
-
-- o4n_git_set_remote  
-  Set Git remote values on any directory to connect to central repository  
+  Set Git remote values on any directory to connect to central repository, Add files for tracking, Commit and Push  
 
 - o4n_git_import  
   import selected files from a Git repository  
