@@ -66,6 +66,7 @@ import glob
 
 output = {}
 
+
 def import_from_repo_token(_repo, _token, _path_clone):
     global output
     _repo_name = _repo.replace("https://", "")
@@ -163,11 +164,12 @@ def main():
             msg_ret = "Repo clon has not been removed"
     else:
         msg_ret = "Repo has not been imported"
-        
+
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
     else:
         module.fail_json(failed=True, msg=msg_ret, content=output)
+
 
 if __name__ == "__main__":
     main()
