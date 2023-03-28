@@ -36,6 +36,10 @@ options:
             define if push will be forced
         required: False
         default: False
+    comment:
+        description:
+            commit comment
+        required: False
     path:
         description:
             path where add, commit and push must be applied
@@ -46,9 +50,8 @@ options:
         required: True
     token:
         description:
-            credential token type to access de repository
+            credential token type to access the repository
         required: True
-
 """
 
 EXAMPLES = """
@@ -58,6 +61,7 @@ tasks:
         origin: origin
         remote: git@github.com:repository.git
         branch: main
+        token: {{ token }}
         path: "./"
         files: "*.txt"
         comment: Refactoring
