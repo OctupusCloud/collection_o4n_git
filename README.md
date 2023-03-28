@@ -1,6 +1,6 @@
 # Octupus Collection
 
-Collection o4n_dev_git helps developers to work with Gite Repositories.
+Collection o4n_dev_git helps developers to work with Gite Repositories.  
 By Ed Scrimaglia
 
 ## Required

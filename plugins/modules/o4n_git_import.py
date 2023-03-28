@@ -64,8 +64,10 @@ from ansible.module_utils.basic import AnsibleModule
 import subprocess
 import glob
 
+output = {}
 
 def import_from_repo_token(_repo, _token, _path_clone):
+    global output
     _repo_name = _repo.replace("https://", "")
     cmd_git = f"git clone https://{_token}@{_repo_name} {_path_clone}"
     cmd_list = cmd_git.split()
@@ -87,24 +89,25 @@ def import_from_repo_token(_repo, _token, _path_clone):
                     value = fatal_list[1].strip()
     if result_code == 0:
         success = True
-        msg_ret = f"Repo <{_repo_name}> cloned to path <{_path_clone}>"
+        output['clone'] = f"Repo <{_repo_name}> cloned to path <{_path_clone}>"
     else:
         success = False
-        msg_ret = f"Error cloning repo <{_repo_name}>. Error: <{value}>"
-    return success, msg_ret
+        output['clone'] = f"Error cloning repo <{_repo_name}>. Error: <{value}>"
+
+    return success, output
 
 
 def cp_content(_path_clone, _path_import, _content):
-    result = subprocess.run(['cp', '-r'] + glob.glob(_path_clone+"/"+_content) + [_path_import], text=True, capture_output=True)
-    result_code = result.returncode
-    value = "source file does not exist"
-    if result_code == 0:
+    global output
+    try:
+        subprocess.run(['cp', '-r'] + glob.glob(_path_clone+"/"+_content) + [_path_import], text=True, capture_output=True)
         success = True
-        msg_ret = f"Content <{_path_clone}/{_content}> imported to <{_path_import}>"
-    else:
+        output['import'] = f"Content <{_path_clone}/{_content}> imported to <{_path_import}>"
+    except Exception as error:
         success = False
-        msg_ret = f"Error importing content <{_path_clone}/{_content}> to <{_path_import}> . Error: <{value}>"
-    return success, msg_ret
+        output['import'] = f"Error importing content <{_path_clone}/{_content}> to <{_path_import}> . Error: <{error}>"
+
+    return success, output
 
 
 def rm_clone(_path_clone):
@@ -124,11 +127,12 @@ def rm_clone(_path_clone):
             value = result.stderr.strip()
     if result_code == 0:
         success = True
-        msg_ret = f"Cloned content <{_path_clone}> removed"
+        output['remove'] = f"Cloned content <{_path_clone}> removed"
     else:
         success = False
-        msg_ret = f"Error removing cloned content <{_path_clone}. Error: <{value}>"
-    return success, msg_ret
+        output['remove'] = f"Error removing cloned content <{_path_clone}. Error: <{value}>"
+
+    return success, output
 
 
 def main():
@@ -148,20 +152,22 @@ def main():
     path_import = module.params.get("path_import")
     content = module.params.get("content")
 
-    ret_msg = {}
-    success_clone, msg_clone = import_from_repo_token(repo, token, path_clone)
-    ret_msg['clone'] = msg_clone
-    if success_clone:
-        success_cp, msg = cp_content(path_clone, path_import, content)
-        ret_msg['import'] = msg
-        success, msg = rm_clone(path_clone)
-        ret_msg['remove'] = msg
-
-    if success_clone and success_cp and success:
-        module.exit_json(failed=False, msg=ret_msg)
+    msg_ret = "Repo has been imported successfully"
+    success, output = import_from_repo_token(repo, token, path_clone)
+    if success:
+        success_cp, output = cp_content(path_clone, path_import, content)
+        if not success_cp:
+            msg_ret = "No files to import from repo"
+        success_rm, output = rm_clone(path_clone)
+        if not success_rm:
+            msg_ret = "Repo clon has not been removed"
     else:
-        module.fail_json(failed=True, msg=ret_msg)
-
+        msg_ret = "Repo has not been imported"
+        
+    if success:
+        module.exit_json(failed=False, msg=msg_ret, content=output)
+    else:
+        module.fail_json(failed=True, msg=msg_ret, content=output)
 
 if __name__ == "__main__":
     main()
