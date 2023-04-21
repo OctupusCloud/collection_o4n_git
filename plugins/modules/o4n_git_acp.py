@@ -183,7 +183,7 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=False, type='str', choices=['present','absent'], default='present'),
+            force=dict(required=False, type='str', choices=['present', 'absent'], default='present'),
             path=dict(required=True, type='str'),
             token=dict(required=True, type='str')
         )
