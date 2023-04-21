@@ -33,9 +33,9 @@ options:
         default: "."
     force:
         description:
-            define if push will be forced
+            define if push will be forced, present or absent
         required: False
-        default: False
+        default: present
     comment:
         description:
             commit comment
@@ -65,7 +65,7 @@ tasks:
         path: "./"
         files: "*.txt"
         comment: Refactoring
-        force: true
+        force: present
       register: salida
 """
 
@@ -134,7 +134,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _token, _remote):
             pass
 
         # git push
-        force = "--force" if _force else ""
+        force = "--force" if _force == "present" else ""
         remote_rep = _remote.strip().split('https://')
         if len(remote_rep) == 2:
             repo_name = remote_rep[-1]
@@ -183,7 +183,7 @@ def main():
             branch=dict(required=False, type='str', default='main'),
             files=dict(required=False, type='str', default='.'),
             comment=dict(required=False, type='str', default='new commit'),
-            force=dict(required=False, type='str', default='present'),
+            force=dict(required=False, type='str', choices=['present','absent'], default='present'),
             path=dict(required=True, type='str'),
             token=dict(required=True, type='str')
         )
