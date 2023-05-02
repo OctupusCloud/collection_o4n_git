@@ -102,7 +102,7 @@ def set_remote(_path, _origin, _remote_repo, _branch):
     return output, success
 
 
-def git_acp(_origin, _branch, _comment, _files, _force, _token, _remote):
+def git_acp(_branch, _comment, _files, _force, _token, _remote):
     global output
     success = False
     try:
@@ -134,7 +134,7 @@ def git_acp(_origin, _branch, _comment, _files, _force, _token, _remote):
             pass
 
         # git push
-        force = "--force" if _force == "present" else ""
+        force = "--force" if _force.lower() == "present" else ""
         remote_rep = _remote.strip().split('https://')
         if len(remote_rep) == 2:
             repo_name = remote_rep[-1]
@@ -202,7 +202,7 @@ def main():
     output, success = set_remote(path, origin, remote, branch)
     if success:
         force = "--force" if force.lower() in ["present"] else ""
-        output, success = git_acp(origin, branch, comment, files, force, token, remote)
+        output, success = git_acp(branch, comment, files, force, token, remote)
 
     # Retorno del módulo
     if success:
