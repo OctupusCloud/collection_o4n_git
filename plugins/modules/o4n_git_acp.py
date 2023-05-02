@@ -201,7 +201,6 @@ def main():
     # Lógica del modulo
     output, success = set_remote(path, origin, remote, branch)
     if success:
-        force = "--force" if force.lower() in ["present"] else ""
         output, success = git_acp(branch, comment, files, force, token, remote)
 
     # Retorno del módulo
