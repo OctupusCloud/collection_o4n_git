@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals
 DOCUMENTATION = """
 ---
 module: o4n_git_acp
-version_added: "2.0"
+version_added: "2.1"
 author: "Ed Scrimaglia"
 short_description: push content to a Git repository
 description:
@@ -52,6 +52,14 @@ options:
         description:
             credential token type to access the repository
         required: True
+    user_name:
+        description:
+            user name for setting git (git config user.name)
+        required: False
+    user_email:
+        description:
+            user email for setting git (git config user.email)
+        required: False   
 """
 
 EXAMPLES = """
@@ -66,6 +74,8 @@ tasks:
         files: "*.txt"
         comment: Refactoring
         force: present
+        user_name: oction automation
+        user_email: oction@octupus.com
       register: salida
 """
 
@@ -79,7 +89,7 @@ output = {}
 
 
 # Methods
-def set_remote(_path, _origin, _remote_repo, _branch):
+def set_remote(_path, _origin: str, _remote_repo: str, _branch: str, _git_user: str, _git_email: str):
     global output
     success = False
     try:
@@ -88,8 +98,10 @@ def set_remote(_path, _origin, _remote_repo, _branch):
         set_remote_command = f"git remote remove {_origin}"
         os.system(set_remote_command)
         os.system("git init")
-        os.system("git config user.name 'oction automation'")
-        os.system("git config user.email 'oction@octupus.com'")
+        set_name_command = f"git config user.name {_git_user}"
+        os.system(set_name_command)
+        set_email_command = f"git config user.name {_git_user}"
+        os.system(set_email_command)
         set_branch_command = f"git branch -M {_branch}"
         os.system(set_branch_command)
         set_remote_command = f"git remote add {_origin} {_remote_repo}"
@@ -102,7 +114,7 @@ def set_remote(_path, _origin, _remote_repo, _branch):
     return output, success
 
 
-def git_acp(_branch, _comment, _files, _force, _token, _remote):
+def git_acp(_branch: str, _comment: str, _files: str, _force: str, _token: str, _remote: str):
     global output
     success = False
     try:
@@ -154,19 +166,6 @@ def git_acp(_branch, _comment, _files, _force, _token, _remote):
         else:
             output['push'] = f"Pushing branch {_branch} to {_remote} has failed. Invalid {_remote}"
 
-        # Delete remote settings
-        # set_command = f"git remote remove {_origin}"
-        # cmd_list = set_command.split()
-        # result = subprocess.run(cmd_list, text=True, capture_output=True)
-        # if result.stdout:
-        #     std_out = result.stdout.replace("\n", " ")
-        #     output['remove'] = f"{std_out}"
-        # elif result.stderr:
-        #     std_err = result.stderr.replace("\n", " ")
-        #     output['remove'] = f"{std_err}"
-        # else:
-        #     output['remove'] = f"Origin {_origin} removed from git remote"
-
     except Exception as error:
         success = False
         output = {"push": f"Pushing branch {_branch} to {_remote} has failed. Error {error}"}
@@ -185,7 +184,9 @@ def main():
             comment=dict(required=False, type='str', default='new commit'),
             force=dict(required=False, type='str', choices=['present', 'absent'], default='present'),
             path=dict(required=True, type='str'),
-            token=dict(required=True, type='str')
+            token=dict(required=True, type='str'),
+            user_name=dict(required=False, type='str', default='oction automation'),
+            user_email=dict(required=False, type='str', default='oction@octupus.com')
         )
     )
 
@@ -197,9 +198,12 @@ def main():
     force = module.params.get("force")
     path = module.params.get("path")
     token = module.params.get("token")
+    user_name = module.params.get("user_name")
+    user_email = module.params.get("user_email")
+      
 
     # Lógica del modulo
-    output, success = set_remote(path, origin, remote, branch)
+    output, success = set_remote(path, origin, remote, branch, user_name, user_email)
     if success:
         output, success = git_acp(branch, comment, files, force, token, remote)
 
