@@ -100,7 +100,7 @@ def set_remote(_path, _origin: str, _remote_repo: str, _branch: str, _git_user: 
         os.system("git init")
         set_name_command = f"git config user.name {_git_user}"
         os.system(set_name_command)
-        set_email_command = f"git config user.name {_git_user}"
+        set_email_command = f"git config user.email {_git_email}"
         os.system(set_email_command)
         set_branch_command = f"git branch -M {_branch}"
         os.system(set_branch_command)
