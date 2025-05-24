@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals
@@ -16,6 +16,7 @@ description:
     - remove clone content
 notes:
     - Testeado en linux
+    - Establecer `ansible_python_interpreter` a Python 3 si es necesario
 options:
     token:
         description:
